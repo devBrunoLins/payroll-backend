@@ -1,19 +1,17 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { CreateUserDto } from './dto/create.dto';
 import { EditUserDto } from './dto/edit.dto';
 import { JwtService } from '@nestjs/jwt';
-import { SigninDto } from './dto/sign-in.dto';
-import { compare, hash } from 'bcrypt';
-import { ITokenPayload } from './interfaces/token-payload.interface';
+import { hash } from 'bcrypt';
+
 
 @Injectable()
 export class UserService {
     constructor(
-        @InjectEntityManager() private readonly manager: EntityManager,
-        private jwtService: JwtService,
+        @InjectEntityManager() private readonly manager: EntityManager
     ){}
 
     async exists(id: string): Promise<boolean> {
@@ -93,41 +91,6 @@ export class UserService {
         await this.manager.delete(UserEntity, user.id);
 
         return user.id;
-        } catch (error) {
-            console.error(error);
-            throw error;
-        }
-    }
-
-    async signIn(userWithoutPsw: SigninDto) {
-        try {
-            const user = await this.findByEmail(userWithoutPsw.email ?? '');
-
-            if(!user) {
-                throw new BadRequestException('Usuário não encontrado');
-            }
-
-            const isMatchPassword = await compare(userWithoutPsw.password, user.password_hash)
-
-            if(!isMatchPassword) {
-                throw new UnauthorizedException('Usuário ou senha incorretos');
-            }
-    
-            const payload: ITokenPayload = {
-                email: userWithoutPsw.email,
-                name: user.name,
-                company_id: user.company_id,
-                id: user.id,
-            };
-        
-            const access_token = this.jwtService.sign(payload, {
-                secret: process.env.JWT_SECRET,
-                expiresIn: '1d',
-            });
-        
-            return {
-            access_token
-            };
         } catch (error) {
             console.error(error);
             throw error;

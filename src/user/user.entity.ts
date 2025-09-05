@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, JoinColumn, Index, Unique, DeleteDateColumn } from 'typeorm'
 import { CompanyEntity } from '../company/company.entity'
 import { ApiProperty } from '@nestjs/swagger'
+import { IsOptional } from 'class-validator'
 
 @Entity('users')
 @Unique(['company_id', 'email'])
@@ -69,6 +70,15 @@ export class UserEntity {
   })
   @Column({ default: true })
   is_active: boolean
+
+  @ApiProperty({
+    description: 'Token de recuperação de senha',
+    example: '1234567890',
+    default: null
+  })
+  @IsOptional()
+  @Column({ default: null })
+  recovery_password_token: string
 
   @ApiProperty({
     description: 'Data e hora de criação do registro',

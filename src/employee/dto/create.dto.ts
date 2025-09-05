@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, IsDateString, Matches, MinLength } from 'class-validator'
+import { IsString, IsNotEmpty, IsOptional, IsDateString, Matches, MinLength, IsNumber } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateEmployeeDto {
@@ -44,4 +44,13 @@ export class CreateEmployeeDto {
   @IsOptional()
   @IsDateString({}, { message: 'Data de demissão deve estar no formato YYYY-MM-DD' })
   termination_date?: string
+
+  @ApiProperty({
+    description: 'Salário do funcionário',
+    example: 1570.00,
+    format: 'number'
+  })
+  @IsNotEmpty({ message: 'Salário é obrigatório' })
+  @IsNumber()
+  salary: number
 }

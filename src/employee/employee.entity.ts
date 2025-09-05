@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, Unique, Index, DeleteDateColumn } from 'typeorm'
 import { ApiProperty } from '@nestjs/swagger'
 import { CompanyEntity } from '../company/company.entity'
+import { IsNotEmpty } from 'class-validator'
 
 @Entity('employees')
 @Unique(['company_id', 'cpf']) // CPF único por empresa
@@ -43,6 +44,15 @@ export class EmployeeEntity {
   })
   @Column()
   cpf: string
+
+  @ApiProperty({
+    description: 'Salário do funcionário',
+    example: 1570.00,
+    format: 'number'
+  })
+  @IsNotEmpty({ message: 'Salário é obrigatório' })
+  @Column()
+  salary: number
 
   @ApiProperty({
     description: 'Data de admissão do funcionário na empresa',
