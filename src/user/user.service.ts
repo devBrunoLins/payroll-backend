@@ -6,7 +6,8 @@ import { CreateUserDto } from './dto/create.dto';
 import { EditUserDto } from './dto/edit.dto';
 import { JwtService } from '@nestjs/jwt';
 import { SigninDto } from './dto/sign-in.dto';
-import { compare } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
+import { ITokenPayload } from './interfaces/token-payload.interface';
 
 @Injectable()
 export class UserService {
@@ -55,7 +56,12 @@ export class UserService {
 
     async create(user: CreateUserDto): Promise<UserEntity> {
         try {
-            return this.manager.save(UserEntity, user);
+            const hashedPassword = await hash(user.password, 10);
+            
+            return this.manager.save(UserEntity, {
+                ...user,
+                password_hash: hashedPassword,
+            });
         } catch (error) {
             console.error(error);
             throw error;
@@ -107,7 +113,7 @@ export class UserService {
                 throw new UnauthorizedException('Usuário ou senha incorretos');
             }
     
-            const payload = {
+            const payload: ITokenPayload = {
                 email: userWithoutPsw.email,
                 name: user.name,
                 company_id: user.company_id,

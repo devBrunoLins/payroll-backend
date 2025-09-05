@@ -13,11 +13,37 @@ export class UserController {
 
   @Get()
   @HttpCode(200)
+  @ApiOperation({ 
+    summary: 'Listar todos os usuários',
+    description: 'Retorna uma lista com todos os usuários cadastrados no sistema' 
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Lista de usuários retornada com sucesso',
+    type: [UserEntity]
+  })
+  @ApiResponse({ 
+    status: 500, 
+    description: 'Erro interno do servidor' 
+  })
   async findAll(): Promise<UserEntity[]> {
     return await this.userService.findAll();
   }
 
   @Get(':id')
+  @ApiOperation({ 
+    summary: 'Buscar usuário por ID',
+    description: 'Retorna os dados de um usuário específico baseado no ID fornecido' 
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Usuário encontrado com sucesso',
+    type: [UserEntity]
+  })
+  @ApiResponse({ 
+    status: 500, 
+    description: 'Erro interno do servidor' 
+  })
   @HttpCode(200)
   async findById(@Param('id') id: string): Promise<UserEntity> {
     return await this.userService.findById(id);
@@ -47,6 +73,23 @@ export class UserController {
   }
 
   @Post()
+  @ApiOperation({ 
+    summary: 'Criar novo usuário',
+    description: 'Cria um novo usuário no sistema com os dados fornecidos' 
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Usuário criado com sucesso',
+    type: UserEntity
+  })
+  @ApiResponse({ 
+    status: 500, 
+    description: 'Erro interno do servidor' 
+  })
+  @ApiBody({ 
+    type: CreateUserDto,
+    description: 'Dados do usuário a serem criados'
+  })
   @HttpCode(200)
   async create(@Body() body: CreateUserDto): Promise<UserEntity> {
     return this.userService.create(body);

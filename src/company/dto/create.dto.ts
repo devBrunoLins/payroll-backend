@@ -24,7 +24,7 @@ export class CreateCompanyDto {
 
   @ApiProperty({
     description: 'CNPJ da empresa no formato brasileiro',
-    example: '12.345.678/0001-90',
+    example: '12345678000190',
     pattern: '^\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}$',
     required: false
   })

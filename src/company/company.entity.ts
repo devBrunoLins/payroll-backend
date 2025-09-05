@@ -30,7 +30,7 @@ export class CompanyEntity {
 
   @ApiProperty({
     description: 'CNPJ da empresa no formato brasileiro',
-    example: '12.345.678/0001-90',
+    example: '12345678000190',
     nullable: true
   })
   @Column({ nullable: true })
