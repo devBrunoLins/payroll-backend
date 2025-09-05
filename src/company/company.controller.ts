@@ -1,7 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { ApiOperation, ApiResponse, ApiParam, ApiBody, ApiTags } from '@nestjs/swagger';
-import { DeleteCompanyDto } from './dto/delete.dto';
 import { CompanyEntity } from './company.entity';
 import { CreateCompanyDto } from './dto/create.dto';
 import { EditCompanyDto } from './dto/edit.dto';
@@ -116,15 +115,16 @@ export class CompanyController {
     return await this.companyService.edit(body, id);
   }
 
-  @Delete()
+  @Delete(':id')
   @HttpCode(200)
   @ApiOperation({ 
     summary: 'Deletar empresa',
     description: 'Remove uma empresa do sistema' 
   })
-  @ApiBody({ 
-    type: DeleteCompanyDto,
-    description: 'ID da empresa a ser deletada'
+  @ApiParam({ 
+    name: 'id', 
+    description: 'ID único da empresa (UUID)',
+    example: '550e8400-e29b-41d4-a716-446655440000'
   })
   @ApiResponse({ 
     status: 200, 
@@ -142,7 +142,7 @@ export class CompanyController {
     status: 404, 
     description: 'Empresa não encontrada' 
   })
-  async delete(@Body() body: DeleteCompanyDto): Promise<string> {
-    return await this.companyService.delete(body);
+  async delete(@Param('id') id: string): Promise<string> {
+    return await this.companyService.delete(id);
   }
 }

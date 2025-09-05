@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, Unique, Index } from 'typeorm'
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, Unique, Index, DeleteDateColumn } from 'typeorm'
 import { ApiProperty } from '@nestjs/swagger'
 import { CompanyEntity } from '../company/company.entity'
 
@@ -75,4 +75,11 @@ export class EmployeeEntity {
   })
   @UpdateDateColumn({ type: 'timestamptz' })
   updated_at: Date
+
+  @ApiProperty({
+    description: 'Data e hora da exclusão do registro',
+    example: '2024-01-20T14:45:00Z'
+  })
+  @DeleteDateColumn({ type: 'timestamptz' })
+  deleted_at: Date
 }

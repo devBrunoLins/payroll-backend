@@ -4,7 +4,6 @@ import { EntityManager } from 'typeorm';
 import { EmployeeEntity } from './employee.entity';
 import { EditEmployeeDto } from './dto/edit.dto';
 import { CreateEmployeeDto } from './dto/create.dto';
-import { DeleteEmployeeDto } from './dto/delete.dto';
 
 @Injectable()
 export class EmployeeService {
@@ -48,30 +47,36 @@ export class EmployeeService {
         }
     }
 
-    async edit(user: EditEmployeeDto): Promise<EmployeeEntity> {
+    async edit(employee: EditEmployeeDto, id: string): Promise<string> {
         try {
-            const userExists = await this.exists(user.id);
-            if(!userExists) {
+            const alreadyExists = await this.findById(id);
+            if(!alreadyExists) {
                 throw new BadRequestException('Funcionário não encontrado');
             }
             
-            return this.manager.save(EmployeeEntity, user);
+            await this.manager.update(EmployeeEntity, id, {
+                ...employee,
+                id,
+                updated_at: new Date(),
+                created_at: alreadyExists.created_at
+            });
+
+            return id;
         } catch (error) {
             console.error(error);
             throw error;
         }
     }
 
-    async delete(employee: DeleteEmployeeDto): Promise<string> {
+    async delete(id: string): Promise<string> {
         try {
-            const userExists = await this.exists(employee.id);
-            if(!userExists) {
+            const exists = await this.exists(id);
+            if(!exists) {
                 throw new BadRequestException('Funcionário não encontrado');
             }
         
-        await this.manager.delete(EmployeeEntity, employee.id);
-
-        return employee.id;
+            await this.manager.softDelete(EmployeeEntity, id);
+            return id;
         } catch (error) {
             console.error(error);
             throw error;

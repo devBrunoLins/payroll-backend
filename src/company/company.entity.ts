@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, Index } from 'typeorm'
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, Index, DeleteDateColumn } from 'typeorm'
 import { ApiProperty } from '@nestjs/swagger'
 
 @Entity('companies')
@@ -49,4 +49,11 @@ export class CompanyEntity {
   })
   @UpdateDateColumn({ type: 'timestamptz' })
   updated_at: Date
+
+  @ApiProperty({
+    description: 'Data e hora da exclusão do registro',
+    example: '2024-01-20T14:45:00Z'
+  })
+  @DeleteDateColumn({ type: 'timestamptz' })
+  deleted_at: Date
 }

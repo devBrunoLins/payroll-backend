@@ -3,7 +3,6 @@ import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { CompanyEntity } from './company.entity';
 import { CreateCompanyDto } from './dto/create.dto';
-import { DeleteCompanyDto } from './dto/delete.dto';
 import { EditCompanyDto } from './dto/edit.dto';
 
 @Injectable()
@@ -60,7 +59,6 @@ export class CompanyService {
                 throw new BadRequestException('Empresa não encontrado');
             }
             
-            console.log('company: ', {...company, id, updated_at: new Date(), created_at: alreadyExists.created_at});
             await this.manager.update(CompanyEntity, id, {
                 ...company,
                 id,
@@ -75,16 +73,15 @@ export class CompanyService {
         }
     }
 
-    async delete(company: DeleteCompanyDto): Promise<string> {
+    async delete(id: string): Promise<string> {
         try {
-            const userExists = await this.exists(company.id);
+            const userExists = await this.exists(id);
             if(!userExists) {
                 throw new BadRequestException('Empresa não encontrada');
             }
         
-        await this.manager.delete(CompanyEntity, company.id);
-
-        return company.id;
+            await this.manager.softDelete(CompanyEntity, id);
+            return id;
         } catch (error) {
             console.error(error);
             throw error;

@@ -4,7 +4,6 @@ import { EmployeeService } from './employee.service';
 import { EmployeeEntity } from './employee.entity';
 import { CreateEmployeeDto } from './dto/create.dto';
 import { EditEmployeeDto } from './dto/edit.dto';
-import { DeleteEmployeeDto } from './dto/delete.dto';
 
 @ApiTags('Funcionários')
 @Controller('employee')
@@ -85,7 +84,7 @@ export class EmployeeController {
     return this.employeeService.create(body);
   }
   
-  @Put()
+  @Put(':id')
   @HttpCode(200)
   @ApiOperation({ 
     summary: 'Atualizar funcionário',
@@ -112,19 +111,20 @@ export class EmployeeController {
     status: 409, 
     description: 'CPF já existe para outro funcionário da empresa' 
   })
-  async edit(@Body() body: EditEmployeeDto): Promise<EmployeeEntity> {
-    return await this.employeeService.edit(body);
+  @ApiParam({ 
+    name: 'id', 
+    description: 'ID único do funcionário (UUID)',
+    example: '550e8400-e29b-41d4-a716-446655440000'
+  })
+  async edit(@Body() body: EditEmployeeDto, @Param('id') id: string): Promise<string> {
+    return await this.employeeService.edit(body, id);
   }
 
-  @Delete()
+  @Delete(':id')
   @HttpCode(200)
   @ApiOperation({ 
     summary: 'Deletar funcionário',
     description: 'Remove um funcionário do sistema' 
-  })
-  @ApiBody({ 
-    type: DeleteEmployeeDto,
-    description: 'ID do funcionário a ser deletado'
   })
   @ApiResponse({ 
     status: 200, 
@@ -142,7 +142,7 @@ export class EmployeeController {
     status: 404, 
     description: 'Funcionário não encontrado' 
   })
-  async delete(@Body() body: DeleteEmployeeDto): Promise<string> {
-    return await this.employeeService.delete(body);
+  async delete(@Param('id') id: string): Promise<string> {
+    return await this.employeeService.delete(id);
   }
 }
