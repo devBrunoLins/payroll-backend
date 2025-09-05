@@ -11,42 +11,8 @@ services:
       POSTGRES_DB: payroll-db
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - backend
-
-  nest-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: nest_container
-    command: npm run start:dev
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
     ports:
-      - "3000:3000"
-    depends_on:
-      - db
-    environment:
-      DATABASE_HOST: db
-      DATABASE_PORT: 5432
-      DATABASE_USER: BI8hza3ICs
-      DATABASE_PASSWORD: Ee2TBI8hzanHA3ICsNeL
-      DATABASE_NAME: payroll-db
-    networks:
-      - backend
-
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin_container
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@payroll.com
-      PGADMIN_DEFAULT_PASSWORD: Ee2TBI8hzanHA3ICsNeL
-    ports:
-      - "8080:80"
-    depends_on:
-      - db
+      - "5432:5432"   # expõe o Postgres para fora do Docker
     networks:
       - backend
 
