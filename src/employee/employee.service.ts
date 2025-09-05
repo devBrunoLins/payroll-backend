@@ -4,6 +4,7 @@ import { EntityManager } from 'typeorm';
 import { EmployeeEntity } from './employee.entity';
 import { EditEmployeeDto } from './dto/edit.dto';
 import { CreateEmployeeDto } from './dto/create.dto';
+import { CompanyEntity } from 'src/company/company.entity';
 
 @Injectable()
 export class EmployeeService {
@@ -40,6 +41,17 @@ export class EmployeeService {
 
     async create(user: CreateEmployeeDto): Promise<EmployeeEntity> {
         try {
+
+            const companyExists = await this.manager.exists(CompanyEntity, { where: { id: user.company_id } });
+
+            if(!companyExists) {
+                throw new BadRequestException('Empresa não encontrada');
+            }
+
+            // if (currentCompanyId && companyId !== currentCompanyId) {
+            //     throw new ForbiddenException('Operação não permitida para esta empresa')
+            // }
+
             return this.manager.save(EmployeeEntity, user);
         } catch (error) {
             console.error(error);
