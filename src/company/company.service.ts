@@ -32,7 +32,12 @@ export class CompanyService {
 
     async findById(id: string): Promise<CompanyEntity> {
         try {
-            return this.manager.findOne(CompanyEntity, { where: { id } }) as Promise<CompanyEntity>;
+            const company = await this.manager.findOne(CompanyEntity, { where: { id } });
+            if(!company) {
+                throw new BadRequestException('Empresa não encontrada');
+            }
+
+            return company;
         } catch (error) {
             console.error(error);
             throw error;
@@ -48,14 +53,22 @@ export class CompanyService {
         }
     }
 
-    async edit(company: EditCompanyDto): Promise<CompanyEntity> {
+    async edit(company: EditCompanyDto, id: string): Promise<string> {
         try {
-            const userExists = await this.exists(company.id);
-            if(!userExists) {
+            const alreadyExists = await this.findById(id);
+            if(!alreadyExists) {
                 throw new BadRequestException('Empresa não encontrado');
             }
             
-            return this.manager.save(CompanyEntity, company);
+            console.log('company: ', {...company, id, updated_at: new Date(), created_at: alreadyExists.created_at});
+            await this.manager.update(CompanyEntity, id, {
+                ...company,
+                id,
+                updated_at: new Date(),
+                created_at: alreadyExists.created_at
+            });
+
+            return id;
         } catch (error) {
             console.error(error);
             throw error;

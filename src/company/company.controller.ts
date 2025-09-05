@@ -1,12 +1,13 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put } from '@nestjs/common';
 import { CompanyService } from './company.service';
-import { ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiParam, ApiBody, ApiTags } from '@nestjs/swagger';
 import { DeleteCompanyDto } from './dto/delete.dto';
 import { CompanyEntity } from './company.entity';
 import { CreateCompanyDto } from './dto/create.dto';
 import { EditCompanyDto } from './dto/edit.dto';
 
 
+@ApiTags('Empresas')
 @Controller('company')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
@@ -108,8 +109,11 @@ export class CompanyController {
     status: 404, 
     description: 'Empresa não encontrada' 
   })
-  async edit(@Body() body: EditCompanyDto): Promise<CompanyEntity> {
-    return await this.companyService.edit(body);
+  async edit(
+    @Body() body: EditCompanyDto,
+    @Param('id') id: string
+  ): Promise<string> {
+    return await this.companyService.edit(body, id);
   }
 
   @Delete()
