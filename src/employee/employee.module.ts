@@ -8,10 +8,11 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from 'src/common/guards/jwt/jwt.strategy';
 import { UserModule } from 'src/user/user.module';
+import { UserEntity } from '@/user/user.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([EmployeeEntity, CompanyEntity]),
+    TypeOrmModule.forFeature([EmployeeEntity, CompanyEntity, UserEntity]),
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,

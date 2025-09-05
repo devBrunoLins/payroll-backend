@@ -34,8 +34,8 @@ export class EmployeeController {
     status: 500, 
     description: 'Erro interno do servidor' 
   })
-  async findAll(): Promise<EmployeeEntity[]> {
-    return await this.employeeService.findAll();
+  async findAll(@LoggedUser() user: ITokenPayload): Promise<EmployeeEntity[]> {
+    return await this.employeeService.findAll(user.company_id);
   }
 
   @Get(':id')
@@ -66,8 +66,8 @@ export class EmployeeController {
     status: 401, 
     description: 'Token de acesso inválido ou não fornecido' 
   })
-  async findById(@Param('id') id: string): Promise<EmployeeEntity> {
-    return await this.employeeService.findById(id);
+  async findById(@Param('id') id: string, @LoggedUser() user: ITokenPayload): Promise<EmployeeEntity> {
+    return await this.employeeService.findById(id, user.company_id);
   }
 
   @Post()
@@ -97,8 +97,8 @@ export class EmployeeController {
     status: 401, 
     description: 'Token de acesso inválido ou não fornecido' 
   })
-  async create(@Body() body: CreateEmployeeDto): Promise<EmployeeEntity> {
-    return this.employeeService.create(body);
+  async create(@Body() body: CreateEmployeeDto, @LoggedUser() user: ITokenPayload): Promise<EmployeeEntity> {
+    return this.employeeService.create(body, user);
   }
   
   @Put(':id')
@@ -137,8 +137,12 @@ export class EmployeeController {
     description: 'ID único do funcionário (UUID)',
     example: '550e8400-e29b-41d4-a716-446655440000'
   })
-  async edit(@Body() body: EditEmployeeDto, @Param('id') id: string): Promise<string> {
-    return await this.employeeService.edit(body, id);
+  async edit(
+    @Body() body: EditEmployeeDto,
+    @Param('id') id: string,
+    @LoggedUser() user: ITokenPayload
+  ): Promise<string> {
+    return await this.employeeService.edit(body, id, user.company_id);
   }
 
   @Delete(':id')
@@ -167,7 +171,10 @@ export class EmployeeController {
     status: 401, 
     description: 'Token de acesso inválido ou não fornecido' 
   })
-  async delete(@Param('id') id: string): Promise<string> {
-    return await this.employeeService.delete(id);
+  async delete(
+    @Param('id') id: string,
+    @LoggedUser() user: ITokenPayload
+  ): Promise<string> {
+    return await this.employeeService.delete(id, user.company_id);
   }
 }

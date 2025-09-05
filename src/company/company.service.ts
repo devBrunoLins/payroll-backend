@@ -45,6 +45,10 @@ export class CompanyService {
 
     async create(company: CreateCompanyDto): Promise<CompanyEntity> {
         try {
+            if(await this.manager.exists(CompanyEntity, { where: { cnpj: company.cnpj } })){
+                throw new BadRequestException('CNPJ já cadastrado');
+            }
+
             return this.manager.save(CompanyEntity, company);
         } catch (error) {
             console.error(error);

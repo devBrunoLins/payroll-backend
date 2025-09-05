@@ -39,7 +39,7 @@ export class EmployeeEntity {
 
   @ApiProperty({
     description: 'CPF do funcionário no formato brasileiro',
-    example: '123.456.789-00'
+    example: '12345678900'
   })
   @Column()
   cpf: string

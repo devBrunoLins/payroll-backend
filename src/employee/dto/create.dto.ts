@@ -1,15 +1,7 @@
-import { IsString, IsNotEmpty, IsOptional, IsDateString, IsUUID, Matches, MinLength } from 'class-validator'
+import { IsString, IsNotEmpty, IsOptional, IsDateString, Matches, MinLength } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateEmployeeDto {
-  @ApiProperty({
-    description: 'ID único da empresa (UUID)',
-    example: '550e8400-e29b-41d4-a716-446655440000',
-    format: 'uuid'
-  })
-  @IsNotEmpty({ message: 'ID da empresa é obrigatório' })
-  @IsUUID('4', { message: 'ID da empresa deve ser um UUID válido' })
-  company_id: string
 
   @ApiProperty({
     description: 'Nome completo do funcionário',
@@ -23,7 +15,7 @@ export class CreateEmployeeDto {
 
   @ApiProperty({
     description: 'CPF do funcionário no formato brasileiro',
-    example: '123.456.789-00',
+    example: '12345678900',
     pattern: '^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$'
   })
   @IsNotEmpty({ message: 'CPF é obrigatório' })

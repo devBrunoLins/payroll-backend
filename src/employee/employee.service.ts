@@ -1,18 +1,20 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { EmployeeEntity } from './employee.entity';
 import { EditEmployeeDto } from './dto/edit.dto';
 import { CreateEmployeeDto } from './dto/create.dto';
 import { CompanyEntity } from 'src/company/company.entity';
+import { ITokenPayload } from '@/user/interfaces/token-payload.interface';
+import { UserEntity } from '@/user/user.entity';
 
 @Injectable()
 export class EmployeeService {
     constructor(@InjectEntityManager() private readonly manager: EntityManager){}
     
-    async exists(id: string): Promise<boolean> {
+    async exists(id: string, company_id: string): Promise<boolean> {
         try {
-            return this.manager.exists(EmployeeEntity, { where: { id } });
+            return this.manager.exists(EmployeeEntity, { where: { id, company_id } });
         }
         catch(error){
             console.error(error);
@@ -20,9 +22,9 @@ export class EmployeeService {
         }
     }
 
-    async findAll(): Promise<EmployeeEntity[]> {
+    async findAll(company_id: string): Promise<EmployeeEntity[]> {
         try {
-            return this.manager.find(EmployeeEntity);
+            return this.manager.find(EmployeeEntity, { where: { company_id } });
         }
         catch(error){
             console.error(error);
@@ -42,38 +44,42 @@ export class EmployeeService {
         }
     }
 
-    async findById(id: string): Promise<EmployeeEntity> {
+    async findById(id: string, company_id: string): Promise<EmployeeEntity> {
         try {
-            return this.manager.findOne(EmployeeEntity, { where: { id } }) as Promise<EmployeeEntity>;
+            return this.manager.findOne(EmployeeEntity, { where: { id, company_id } }) as Promise<EmployeeEntity>;
         } catch (error) {
             console.error(error);
             throw error;
         }
     }
 
-    async create(user: CreateEmployeeDto): Promise<EmployeeEntity> {
+    async create(user: CreateEmployeeDto, userLogged: ITokenPayload): Promise<EmployeeEntity> {
         try {
 
-            const companyExists = await this.manager.exists(CompanyEntity, { where: { id: user.company_id } });
+            const [companyExists, userExists] = await Promise.all([
+                this.manager.findOne(CompanyEntity, { where: { id: userLogged.company_id } }),
+                this.manager.findOne(UserEntity, { where: { email: userLogged.email } })
+            ])
+
+            if(userExists && userExists.company_id !== userLogged.company_id){
+                throw new ForbiddenException('Operação não permitida');
+            }
 
             if(!companyExists) {
                 throw new BadRequestException('Empresa não encontrada');
             }
 
-            // if (currentCompanyId && companyId !== currentCompanyId) {
-            //     throw new ForbiddenException('Operação não permitida para esta empresa')
-            // }
-
-            return this.manager.save(EmployeeEntity, user);
+            return this.manager.save(EmployeeEntity, {...user, company_id: userLogged.company_id});
         } catch (error) {
             console.error(error);
             throw error;
         }
     }
 
-    async edit(employee: EditEmployeeDto, id: string): Promise<string> {
+    async edit(employee: EditEmployeeDto, id: string, company_id: string): Promise<string> {
         try {
-            const alreadyExists = await this.findById(id);
+            const alreadyExists = await this.findById(id, company_id);
+            
             if(!alreadyExists) {
                 throw new BadRequestException('Funcionário não encontrado');
             }
@@ -92,9 +98,9 @@ export class EmployeeService {
         }
     }
 
-    async delete(id: string): Promise<string> {
+    async delete(id: string, company_id: string): Promise<string> {
         try {
-            const exists = await this.exists(id);
+            const exists = await this.exists(id, company_id);
             if(!exists) {
                 throw new BadRequestException('Funcionário não encontrado');
             }
