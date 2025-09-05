@@ -86,7 +86,7 @@ export class CompanyController {
     return this.companyService.create(body);
   }
   
-  @Put()
+  @Put(':id')
   @HttpCode(200)
   @ApiOperation({ 
     summary: 'Atualizar empresa',
