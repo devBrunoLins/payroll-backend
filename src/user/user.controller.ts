@@ -4,10 +4,13 @@ import { UserEntity } from './user.entity';
 import { CreateUserDto } from './dto/create.dto';
 import { EditUserDto } from './dto/edit.dto';
 import { DeleteUserDto } from './dto/delete.dto';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '@/common/guards/jwt/jwt-auth.guard';
 
 @ApiTags('Usuários')
+@ApiBearerAuth('access-token')
+@UseGuards(JwtAuthGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -24,6 +27,10 @@ export class UserController {
     type: [UserEntity]
   })
   @ApiResponse({ 
+    status: 401, 
+    description: 'Token de acesso inválido ou não fornecido' 
+  })
+  @ApiResponse({ 
     status: 500, 
     description: 'Erro interno do servidor' 
   })
@@ -36,10 +43,27 @@ export class UserController {
     summary: 'Buscar usuário por ID',
     description: 'Retorna os dados de um usuário específico baseado no ID fornecido' 
   })
+  @ApiParam({ 
+    name: 'id', 
+    description: 'ID único do usuário (UUID)',
+    example: '550e8400-e29b-41d4-a716-446655440000'
+  })
   @ApiResponse({ 
     status: 200, 
     description: 'Usuário encontrado com sucesso',
-    type: [UserEntity]
+    type: UserEntity
+  })
+  @ApiResponse({ 
+    status: 404, 
+    description: 'Usuário não encontrado' 
+  })
+  @ApiResponse({ 
+    status: 400, 
+    description: 'ID inválido fornecido' 
+  })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'Token de acesso inválido ou não fornecido' 
   })
   @ApiResponse({ 
     status: 500, 
@@ -61,6 +85,18 @@ export class UserController {
     type: UserEntity
   })
   @ApiResponse({ 
+    status: 400, 
+    description: 'Dados inválidos fornecidos' 
+  })
+  @ApiResponse({ 
+    status: 409, 
+    description: 'Email já cadastrado para esta empresa' 
+  })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'Token de acesso inválido ou não fornecido' 
+  })
+  @ApiResponse({ 
     status: 500, 
     description: 'Erro interno do servidor' 
   })
@@ -73,15 +109,80 @@ export class UserController {
     return this.userService.create(body);
   }
   
-  @Put()
+  @Put(':id')
   @HttpCode(200)
-  async edit(@Body() body: EditUserDto): Promise<UserEntity> {
+  @ApiOperation({ 
+    summary: 'Atualizar usuário',
+    description: 'Atualiza os dados de um usuário existente' 
+  })
+  @ApiParam({ 
+    name: 'id', 
+    description: 'ID único do usuário (UUID)',
+    example: '550e8400-e29b-41d4-a716-446655440000'
+  })
+  @ApiBody({ 
+    type: EditUserDto,
+    description: 'Dados do usuário a serem atualizados'
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Usuário atualizado com sucesso',
+    type: UserEntity
+  })
+  @ApiResponse({ 
+    status: 400, 
+    description: 'Dados inválidos fornecidos' 
+  })
+  @ApiResponse({ 
+    status: 404, 
+    description: 'Usuário não encontrado' 
+  })
+  @ApiResponse({ 
+    status: 409, 
+    description: 'Email já existe para outro usuário da empresa' 
+  })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'Token de acesso inválido ou não fornecido' 
+  })
+  async edit(@Body() body: EditUserDto, @Param('id') id: string): Promise<UserEntity> {
+    body.id = id;
     return await this.userService.edit(body);
   }
 
-  @Delete()
+  @Delete(':id')
   @HttpCode(200)
-  async delete(@Body() body: DeleteUserDto): Promise<string> {
-    return await this.userService.delete(body);
+  @ApiOperation({ 
+    summary: 'Deletar usuário',
+    description: 'Remove um usuário do sistema' 
+  })
+  @ApiParam({ 
+    name: 'id', 
+    description: 'ID único do usuário (UUID)',
+    example: '550e8400-e29b-41d4-a716-446655440000'
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Usuário deletado com sucesso',
+    schema: {
+      type: 'string',
+      example: 'Usuário deletado com sucesso'
+    }
+  })
+  @ApiResponse({ 
+    status: 400, 
+    description: 'ID inválido fornecido' 
+  })
+  @ApiResponse({ 
+    status: 404, 
+    description: 'Usuário não encontrado' 
+  })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'Token de acesso inválido ou não fornecido' 
+  })
+  async delete(@Param('id') id: string): Promise<string> {
+    const deleteDto = { id } as EditUserDto;
+    return await this.userService.delete(deleteDto);
   }
 }

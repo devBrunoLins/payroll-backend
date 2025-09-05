@@ -1,12 +1,15 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { CompanyService } from './company.service';
-import { ApiOperation, ApiResponse, ApiParam, ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiParam, ApiBody, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from '@/common/guards/jwt/jwt-auth.guard';
 import { CompanyEntity } from './company.entity';
 import { CreateCompanyDto } from './dto/create.dto';
 import { EditCompanyDto } from './dto/edit.dto';
 
 
 @ApiTags('Empresas')
+@ApiBearerAuth('access-token')
+@UseGuards(JwtAuthGuard)
 @Controller('company')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
@@ -21,6 +24,10 @@ export class CompanyController {
     status: 200, 
     description: 'Lista de empresas retornada com sucesso',
     type: [CompanyEntity]
+  })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'Token de acesso inválido ou não fornecido' 
   })
   @ApiResponse({ 
     status: 500, 
@@ -54,6 +61,10 @@ export class CompanyController {
     status: 400, 
     description: 'ID inválido fornecido' 
   })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'Token de acesso inválido ou não fornecido' 
+  })
   async findById(@Param('id') id: string): Promise<CompanyEntity> {
     return await this.companyService.findById(id);
   }
@@ -79,7 +90,11 @@ export class CompanyController {
   })
   @ApiResponse({ 
     status: 409, 
-    description: 'CPF já cadastrado para esta empresa' 
+    description: 'CNPJ já cadastrado no sistema' 
+  })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'Token de acesso inválido ou não fornecido' 
   })
   async create(@Body() body: CreateCompanyDto): Promise<CompanyEntity> {
     return this.companyService.create(body);
@@ -107,6 +122,19 @@ export class CompanyController {
   @ApiResponse({ 
     status: 404, 
     description: 'Empresa não encontrada' 
+  })
+  @ApiResponse({ 
+    status: 409, 
+    description: 'CNPJ já existe para outra empresa' 
+  })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'Token de acesso inválido ou não fornecido' 
+  })
+  @ApiParam({ 
+    name: 'id', 
+    description: 'ID único da empresa (UUID)',
+    example: '550e8400-e29b-41d4-a716-446655440000'
   })
   async edit(
     @Body() body: EditCompanyDto,
@@ -141,6 +169,10 @@ export class CompanyController {
   @ApiResponse({ 
     status: 404, 
     description: 'Empresa não encontrada' 
+  })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'Token de acesso inválido ou não fornecido' 
   })
   async delete(@Param('id') id: string): Promise<string> {
     return await this.companyService.delete(id);
