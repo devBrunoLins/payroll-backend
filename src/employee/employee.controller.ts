@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { EmployeeService } from './employee.service';
 import { EmployeeEntity } from './employee.entity';
 import { CreateEmployeeDto } from './dto/create.dto';
@@ -7,6 +7,7 @@ import { EditEmployeeDto } from './dto/edit.dto';
 import { JwtAuthGuard } from '@/common/guards/jwt/jwt-auth.guard';
 
 @ApiTags('Funcionários')
+@ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
 @Controller('employee')
 export class EmployeeController {
@@ -22,6 +23,10 @@ export class EmployeeController {
     status: 200, 
     description: 'Lista de funcionários retornada com sucesso',
     type: [EmployeeEntity]
+  })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'Token de acesso inválido ou não fornecido' 
   })
   @ApiResponse({ 
     status: 500, 
@@ -55,6 +60,10 @@ export class EmployeeController {
     status: 400, 
     description: 'ID inválido fornecido' 
   })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'Token de acesso inválido ou não fornecido' 
+  })
   async findById(@Param('id') id: string): Promise<EmployeeEntity> {
     return await this.employeeService.findById(id);
   }
@@ -81,6 +90,10 @@ export class EmployeeController {
   @ApiResponse({ 
     status: 409, 
     description: 'CPF já cadastrado para esta empresa' 
+  })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'Token de acesso inválido ou não fornecido' 
   })
   async create(@Body() body: CreateEmployeeDto): Promise<EmployeeEntity> {
     return this.employeeService.create(body);
@@ -113,6 +126,10 @@ export class EmployeeController {
     status: 409, 
     description: 'CPF já existe para outro funcionário da empresa' 
   })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'Token de acesso inválido ou não fornecido' 
+  })
   @ApiParam({ 
     name: 'id', 
     description: 'ID único do funcionário (UUID)',
@@ -143,6 +160,10 @@ export class EmployeeController {
   @ApiResponse({ 
     status: 404, 
     description: 'Funcionário não encontrado' 
+  })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'Token de acesso inválido ou não fornecido' 
   })
   async delete(@Param('id') id: string): Promise<string> {
     return await this.employeeService.delete(id);

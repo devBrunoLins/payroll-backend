@@ -18,19 +18,19 @@ async function bootstrap() {
 
   const swaggerConfig = new DocumentBuilder()
   .setTitle('Payroll API')
-  .setDescription('Documentação da API de payeollr')
+  .setDescription('Documentação da API de payroll')
   .setVersion('1.0')
-  // .addBearerAuth(
-  //   {
-  //     description: `Insira apenas o token, sem aspas.`,
-  //     name: 'Authorization',
-  //     bearerFormat: 'Bearer',
-  //     scheme: 'Bearer',
-  //     type: 'http',
-  //     in: 'Header',
-  //   },
-  //   'access-token',
-  // )
+  .addBearerAuth(
+    {
+      description: `Insira apenas o token, sem aspas.`,
+      name: 'Authorization',
+      bearerFormat: 'Bearer',
+      scheme: 'Bearer',
+      type: 'http',
+      in: 'Header',
+    },
+    'access-token',
+  )
   .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
