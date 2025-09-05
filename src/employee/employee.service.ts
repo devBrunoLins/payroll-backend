@@ -30,6 +30,18 @@ export class EmployeeService {
         }
     }
 
+    async findByCompanyId(company_id: string): Promise<EmployeeEntity[]> {
+        try {
+            return this.manager.find(EmployeeEntity, {
+                where: { company_id }
+            });
+        }
+        catch(error){
+            console.error(error);
+            throw error;
+        }
+    }
+
     async findById(id: string): Promise<EmployeeEntity> {
         try {
             return this.manager.findOne(EmployeeEntity, { where: { id } }) as Promise<EmployeeEntity>;

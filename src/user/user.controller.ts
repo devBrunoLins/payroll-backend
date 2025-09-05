@@ -3,7 +3,6 @@ import { UserService } from './user.service';
 import { UserEntity } from './user.entity';
 import { CreateUserDto } from './dto/create.dto';
 import { EditUserDto } from './dto/edit.dto';
-import { DeleteUserDto } from './dto/delete.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@/common/guards/jwt/jwt-auth.guard';

@@ -5,6 +5,8 @@ import { EmployeeEntity } from './employee.entity';
 import { CreateEmployeeDto } from './dto/create.dto';
 import { EditEmployeeDto } from './dto/edit.dto';
 import { JwtAuthGuard } from '@/common/guards/jwt/jwt-auth.guard';
+import { LoggedUser } from '@/common/decorators/logged-user.decorator';
+import { ITokenPayload } from '@/user/interfaces/token-payload.interface';
 
 @ApiTags('Funcionários')
 @ApiBearerAuth('access-token')
