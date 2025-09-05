@@ -145,5 +145,4 @@ export class EmployeeController {
   async delete(@Body() body: DeleteEmployeeDto): Promise<string> {
     return await this.employeeService.delete(body);
   }
-  
 }
