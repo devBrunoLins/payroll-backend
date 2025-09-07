@@ -78,13 +78,18 @@ export class EmployeeService {
         }
     }
 
-    async create(user: CreateEmployeeDto, userLogged: ITokenPayload): Promise<EmployeeEntity> {
+    async create(employee: CreateEmployeeDto, userLogged: ITokenPayload): Promise<EmployeeEntity> {
         try {
 
-            const [companyExists, userExists] = await Promise.all([
+            const [companyExists, userExists, employeeExists] = await Promise.all([
                 this.manager.findOne(CompanyEntity, { where: { id: userLogged.company_id } }),
-                this.manager.findOne(UserEntity, { where: { email: userLogged.email } })
+                this.manager.findOne(UserEntity, { where: { email: userLogged.email } }),
+                this.manager.findOne(EmployeeEntity, { where: { cpf: employee.cpf, company_id: userLogged.company_id } })
             ])
+
+            if(employeeExists) {
+                throw new BadRequestException('Funcionário já cadastrado');
+            }
 
             if(userExists && userExists.company_id !== userLogged.company_id){
                 throw new ForbiddenException('Operação não permitida');
@@ -95,10 +100,10 @@ export class EmployeeService {
             }
 
             return this.manager.save(EmployeeEntity, {
-                full_name: user.full_name,
-                cpf: user.cpf,
-                admission_date: user.admission_date,
-                salary: +user.salary,
+                full_name: employee.full_name,
+                cpf: employee.cpf,
+                admission_date: employee.admission_date,
+                salary: +employee.salary,
                 company_id: userLogged.company_id
             });
         } catch (error) {

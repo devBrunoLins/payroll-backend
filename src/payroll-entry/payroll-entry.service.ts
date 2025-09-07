@@ -18,7 +18,8 @@ export class PayrollEntryService {
           .values({
             employee_id: body.employee_id,
             discount_amount: body.discount,
-            commission_amount: body.comission,
+            commission_amount: body.commission,
+            gross_amount: body.salary.toString(),
             notes: body.notes,
             period_month: () => `date_trunc('month', (now() AT TIME ZONE 'America/Sao_Paulo'))::date`,
           })

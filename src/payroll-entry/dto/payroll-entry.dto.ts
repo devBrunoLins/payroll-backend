@@ -25,12 +25,21 @@ export class PayrollEntryGenerateDto {
     @IsNotEmpty()
     @IsString()
     @ApiProperty({
+        description: 'Salário',
+        example: '100.00',
+        format: 'string'
+    })
+    salary: string
+
+    @IsNotEmpty()
+    @IsString()
+    @ApiProperty({
         description: 'Comissão',
         example: '100.00',
         format: 'string'
     })
     @Min(0, { message: 'Comissão deve ser maior ou igual a 0' })
-    comission: string
+    commission: string
 
     @IsOptional()
     @IsString()

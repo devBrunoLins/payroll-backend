@@ -4,7 +4,6 @@ import { CompanyEntity } from '../company/company.entity'
 import { IsNotEmpty } from 'class-validator'
 
 @Entity('employees')
-@Unique(['company_id', 'cpf']) // CPF único por empresa
 export class EmployeeEntity {
   @ApiProperty({
     description: 'ID único do funcionário',
