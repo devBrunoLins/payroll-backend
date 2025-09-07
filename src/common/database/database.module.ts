@@ -15,7 +15,7 @@ import { databaseProviders } from '../database/database.provider';
       entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
       synchronize: true,
       //logging: true, // Habilita o log de todas as queries
-      ssl: false,
+      ssl: process.env.SSL_MODE,
       extra: {
         ssl: false,
       },
