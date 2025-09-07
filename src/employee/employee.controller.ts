@@ -38,6 +38,29 @@ export class EmployeeController {
     return await this.employeeService.findAll(user.company_id);
   }
 
+  @Get('pending')
+  @HttpCode(200)
+  @ApiOperation({ 
+    summary: 'Listar todos os funcionários que ainda não foram pagos',
+    description: 'Retorna uma lista com todos os funcionários cadastrados no sistema' 
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Lista de funcionários que ainda não foram pagos retornada com sucesso',
+    type: [EmployeeEntity]
+  })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'Token de acesso inválido ou não fornecido' 
+  })
+  @ApiResponse({ 
+    status: 500, 
+    description: 'Erro interno do servidor' 
+  })
+  async listPendingForCurrentMonth(@LoggedUser() user: ITokenPayload): Promise<EmployeeEntity[]> {
+    return await this.employeeService.listPendingForCurrentMonth(user.company_id);
+  }
+
   @Get(':id')
   @HttpCode(200)
   @ApiOperation({ 

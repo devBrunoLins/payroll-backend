@@ -7,7 +7,7 @@ export class SigninDto {
 
   @ApiProperty({
     description: 'Email do usuário',
-    example: 'usuario@exemplo.com.br',
+    example: 'blins44@gmail.com',
     format: 'email'
   })
   @IsEmail({}, { message: 'e-mail inválido' })
@@ -17,7 +17,7 @@ export class SigninDto {
 
   @ApiProperty({
     description: 'Senha do usuário',
-    example: 'Senha123!',
+    example: 'P@$$w0rd..',
     format: 'password'
   })
   @IsString()

@@ -37,16 +37,6 @@ export class EditEmployeeDto {
   admission_date?: string
 
   @ApiProperty({
-    description: 'Data de demissão do funcionário',
-    example: '2024-11-30',
-    format: 'date',
-    required: false
-  })
-  @IsOptional()
-  @IsDateString({}, { message: 'Data de demissão deve estar no formato YYYY-MM-DD' })
-  termination_date?: string
-
-  @ApiProperty({
     description: 'Salário do funcionário',
     example: 1570.00,
     format: 'number'

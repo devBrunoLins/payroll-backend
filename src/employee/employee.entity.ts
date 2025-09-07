@@ -64,15 +64,6 @@ export class EmployeeEntity {
   admission_date?: string
 
   @ApiProperty({
-    description: 'Data de demissão do funcionário da empresa',
-    example: '2024-12-31',
-    format: 'date',
-    nullable: true
-  })
-  @Column({ type: 'date', nullable: true })
-  termination_date?: string
-
-  @ApiProperty({
     description: 'Data e hora de criação do registro',
     example: '2024-01-15T10:30:00Z'
   })

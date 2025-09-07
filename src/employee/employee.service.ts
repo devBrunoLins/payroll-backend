@@ -1,6 +1,6 @@
 import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
-import { InjectEntityManager } from '@nestjs/typeorm';
-import { EntityManager } from 'typeorm';
+import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { EmployeeEntity } from './employee.entity';
 import { EditEmployeeDto } from './dto/edit.dto';
 import { CreateEmployeeDto } from './dto/create.dto';
@@ -10,7 +10,10 @@ import { UserEntity } from '@/user/user.entity';
 
 @Injectable()
 export class EmployeeService {
-    constructor(@InjectEntityManager() private readonly manager: EntityManager){}
+    constructor(
+        @InjectEntityManager() private readonly manager: EntityManager,
+        @InjectRepository(EmployeeEntity) private readonly employeeRepository: Repository<EmployeeEntity>
+    ){}
     
     async exists(id: string, company_id: string): Promise<boolean> {
         try {
@@ -25,6 +28,28 @@ export class EmployeeService {
     async findAll(company_id: string): Promise<EmployeeEntity[]> {
         try {
             return this.manager.find(EmployeeEntity, { where: { company_id } });
+        }
+        catch(error){
+            console.error(error);
+            throw error;
+        }
+    }
+
+    async listPendingForCurrentMonth(company_id: string): Promise<EmployeeEntity[]> {
+        try {
+            return this.employeeRepository
+                .createQueryBuilder('e')
+                .where('e.company_id = :company_id', { company_id })
+                .andWhere(`
+                    NOT EXISTS (
+                        SELECT 1
+                        FROM payroll_entries p
+                        WHERE p.employee_id = e.id
+                        AND p.period_month = date_trunc('month', (now() AT TIME ZONE 'America/Sao_Paulo'))::date
+                    )
+                `)
+                .orderBy('e.full_name', 'ASC')
+                .getMany()
         }
         catch(error){
             console.error(error);
@@ -69,7 +94,13 @@ export class EmployeeService {
                 throw new BadRequestException('Empresa não encontrada');
             }
 
-            return this.manager.save(EmployeeEntity, {...user, company_id: userLogged.company_id});
+            return this.manager.save(EmployeeEntity, {
+                full_name: user.full_name,
+                cpf: user.cpf,
+                admission_date: user.admission_date,
+                salary: +user.salary,
+                company_id: userLogged.company_id
+            });
         } catch (error) {
             console.error(error);
             throw error;
