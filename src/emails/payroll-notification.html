@@ -1,0 +1,229 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      body { 
+        font-family: Arial, sans-serif; 
+        margin: 0; 
+        padding: 20px; 
+        background-color: #f5f5f5; 
+        line-height: 1.6;
+      }
+      .container { 
+        max-width: 800px; 
+        margin: 0 auto; 
+        background: white; 
+        padding: 30px; 
+        border-radius: 8px; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+      }
+      .header { 
+        color: #2c3e50; 
+        border-bottom: 2px solid #3498db; 
+        padding-bottom: 20px; 
+        margin-bottom: 30px; 
+        text-align: center;
+      }
+      .header h1 {
+        margin: 0 0 10px 0;
+        font-size: 28px;
+      }
+      .period-info {
+        background: #ecf0f1;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 20px 0;
+        text-align: center;
+        font-size: 16px;
+        font-weight: bold;
+        color: #2c3e50;
+      }
+      
+      .section-title {
+        color: #2c3e50;
+        font-size: 20px;
+        margin: 30px 0 15px 0;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #bdc3c7;
+      }
+      
+      .employees-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 14px;
+      }
+      .employees-table th {
+        background: #3498db;
+        color: white;
+        padding: 12px 8px;
+        text-align: left;
+        font-weight: bold;
+        border: 1px solid #2980b9;
+      }
+      .employees-table td {
+        padding: 10px 8px;
+        border: 1px solid #bdc3c7;
+        background: #ffffff;
+      }
+      .employees-table tr:nth-child(even) td {
+        background: #f8f9fa;
+      }
+      .employees-table tr:hover td {
+        background: #e8f4f8;
+      }
+      .currency {
+        text-align: right;
+        font-weight: bold;
+      }
+      .positive { color: #27ae60; }
+      .negative { color: #e74c3c; }
+      .neutral { color: #2c3e50; }
+      
+      .summary-section {
+        background: #ecf0f1;
+        padding: 25px;
+        border-radius: 8px;
+        margin: 30px 0;
+      }
+      .summary-grid { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+        gap: 15px; 
+        margin: 20px 0; 
+      }
+      .summary-item { 
+        background: white; 
+        padding: 20px; 
+        border-radius: 5px; 
+        border-left: 4px solid #3498db; 
+        text-align: center;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      }
+      .summary-label { 
+        font-weight: bold; 
+        color: #555; 
+        font-size: 13px; 
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+      .summary-value { 
+        font-size: 22px; 
+        color: #2c3e50; 
+        font-weight: bold;
+      }
+      
+      .observations {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 5px;
+        padding: 10px;
+        margin: 5px 0;
+        font-style: italic;
+        color: #856404;
+      }
+      
+      .footer { 
+        margin-top: 40px; 
+        padding-top: 20px; 
+        border-top: 2px solid #ecf0f1; 
+        text-align: center; 
+        color: #666; 
+        font-size: 12px; 
+      }
+      
+      @media (max-width: 600px) {
+        .container { padding: 15px; }
+        .employees-table { font-size: 12px; }
+        .employees-table th, .employees-table td { padding: 8px 4px; }
+        .summary-grid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>📊 Folha de Pagamento Processada - {{company_name}}</h1>
+        <div class="period-info">
+          Período: {{month}}/{{year}}
+        </div>
+      </div>
+
+      <p style="font-size: 16px; margin-bottom: 30px;">
+        Olá! A folha de pagamento foi processada com sucesso. Confira abaixo os detalhes de cada funcionário e o resumo consolidado:
+      </p>
+
+      <h2 class="section-title">👥 Detalhamento por Funcionário</h2>
+      
+      <table class="employees-table">
+        <thead>
+          <tr>
+            <th>Funcionário</th>
+            <th>Salário Base</th>
+            <th>Comissões</th>
+            <th>Descontos</th>
+            <th>Salário Líquido</th>
+            <th>Observações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each entries}}
+          <tr>
+            <td><strong>{{employee_name}}</strong></td>
+            <td class="currency positive">R$ {{formatCurrency salary}}</td>
+            <td class="currency {{#if commission}}positive{{else}}neutral{{/if}}">
+              {{#if commission}}R$ {{formatCurrency commission}}{{else}}-{{/if}}
+            </td>
+            <td class="currency {{#if discount}}negative{{else}}neutral{{/if}}">
+              {{#if discount}}R$ {{formatCurrency discount}}{{else}}-{{/if}}
+            </td>
+            <td class="currency positive"><strong>R$ {{formatCurrency netSalary}}</strong></td>
+            <td>
+              {{#if observations}}
+                <div class="observations">{{observations}}</div>
+              {{else}}
+                <span style="color: #bdc3c7;">Nenhuma observação</span>
+              {{/if}}
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+
+      <div class="summary-section">
+        <h2 class="section-title" style="margin-top: 0; color: #2c3e50;">📈 Resumo Consolidado</h2>
+        
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="summary-label">Total de Funcionários</div>
+            <div class="summary-value">{{summary.totalEmployees}}</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">Total de Salários</div>
+            <div class="summary-value positive">R$ {{formatCurrency summary.totalSalaries}}</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">Total de Comissões</div>
+            <div class="summary-value positive">R$ {{formatCurrency summary.totalCommissions}}</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">Total de Descontos</div>
+            <div class="summary-value negative">R$ {{formatCurrency summary.totalDiscounts}}</div>
+          </div>
+          <div class="summary-item" style="border-left-color: #27ae60; grid-column: span 2;">
+            <div class="summary-label">💰 Total Líquido Final</div>
+            <div class="summary-value positive" style="font-size: 28px;">R$ {{formatCurrency summary.totalNet}}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p><strong>Sistema de Folha de Pagamento</strong> - {{currentDate}}</p>
+        <p>Este é um email automático, não responda a esta mensagem.</p>
+        <p style="margin-top: 10px; font-size: 11px; color: #999;">
+          Para dúvidas ou suporte, entre em contato com o departamento de RH.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

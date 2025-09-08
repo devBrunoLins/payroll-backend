@@ -4,6 +4,7 @@ import { DatabaseModule } from './common/database/database.module';
 import { UserModule } from './user/user.module';
 import { CompanyModule } from './company/company.module';
 import { PayrollEntryModule } from './payroll-entry/payroll-entry.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -11,7 +12,8 @@ import { PayrollEntryModule } from './payroll-entry/payroll-entry.module';
     DatabaseModule,
     UserModule,
     CompanyModule,
-    PayrollEntryModule
+    PayrollEntryModule,
+    NotificationModule
   ]
 })
 export class AppModule {}
