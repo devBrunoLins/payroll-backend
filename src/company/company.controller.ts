@@ -5,6 +5,7 @@ import { JwtAuthGuard } from '@/common/guards/jwt/jwt-auth.guard';
 import { CompanyEntity } from './company.entity';
 import { CreateCompanyDto } from './dto/create.dto';
 import { EditCompanyDto } from './dto/edit.dto';
+import { EmployeeEntity } from '@/employee/employee.entity';
 
 
 @ApiTags('Empresas')
@@ -176,5 +177,40 @@ export class CompanyController {
   })
   async delete(@Param('id') id: string): Promise<string> {
     return await this.companyService.delete(id);
+  }
+
+  @Get('employees/:company_id')
+  @HttpCode(200)
+  @ApiOperation({ 
+    summary: 'Buscar funcionários da empresa',
+    description: 'Remove uma empresa do sistema' 
+  })
+  @ApiParam({ 
+    name: 'company_id', 
+    description: 'ID único da empresa (UUID)',
+    example: '550e8400-e29b-41d4-a716-446655440000'
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Funcionários da empresa retornados com sucesso',
+    schema: {
+      type: 'string',
+      example: 'Funcionários da empresa retornados com sucesso'
+    }
+  })
+  @ApiResponse({ 
+    status: 400, 
+    description: 'ID inválido fornecido' 
+  })
+  @ApiResponse({ 
+    status: 404, 
+    description: 'Empresa não encontrada' 
+  })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'Token de acesso inválido ou não fornecido' 
+  })
+  async getEmployeesByCompany(@Param('company_id') company_id: string): Promise<EmployeeEntity[]> {
+    return await this.companyService.getEmployeesByCompany(company_id);
   }
 }

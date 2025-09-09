@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } 
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { EmployeeService } from './employee.service';
 import { EmployeeEntity } from './employee.entity';
-import { CreateEmployeeDto } from './dto/create.dto';
+import { CreateEmployeeDto } from './dto/create-for-company.dto';
 import { EditEmployeeDto } from './dto/edit.dto';
 import { JwtAuthGuard } from '@/common/guards/jwt/jwt-auth.guard';
 import { LoggedUser } from '@/common/decorators/logged-user.decorator';
@@ -122,6 +122,37 @@ export class EmployeeController {
   })
   async create(@Body() body: CreateEmployeeDto, @LoggedUser() user: ITokenPayload): Promise<EmployeeEntity> {
     return this.employeeService.create(body, user);
+  }
+
+  @Post('for-company')
+  @HttpCode(200)
+  @ApiOperation({ 
+    summary: 'Criar novo funcionário',
+    description: 'Cria um novo funcionário no sistema com os dados fornecidos' 
+  })
+  @ApiBody({ 
+    type: CreateEmployeeDto,
+    description: 'Dados do funcionário a ser criado'
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Funcionário criado com sucesso',
+    type: EmployeeEntity
+  })
+  @ApiResponse({ 
+    status: 400, 
+    description: 'Dados inválidos fornecidos' 
+  })
+  @ApiResponse({ 
+    status: 409, 
+    description: 'CPF já cadastrado para esta empresa' 
+  })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'Token de acesso inválido ou não fornecido' 
+  })
+  async createForCompany(@Body() body: CreateEmployeeDto): Promise<EmployeeEntity> {
+    return this.employeeService.createForCompany(body);
   }
   
   @Put(':id')

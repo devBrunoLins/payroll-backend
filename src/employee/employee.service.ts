@@ -3,7 +3,7 @@ import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { EmployeeEntity } from './employee.entity';
 import { EditEmployeeDto } from './dto/edit.dto';
-import { CreateEmployeeDto } from './dto/create.dto';
+import { CreateEmployeeDto } from './dto/create-for-company.dto';
 import { CompanyEntity } from 'src/company/company.entity';
 import { ITokenPayload } from '@/user/interfaces/token-payload.interface';
 import { UserEntity } from '@/user/user.entity';
@@ -105,6 +105,30 @@ export class EmployeeService {
                 admission_date: employee.admission_date,
                 salary: +employee.salary,
                 company_id: userLogged.company_id
+            });
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
+    async createForCompany(employee: CreateEmployeeDto): Promise<EmployeeEntity> {
+        try {
+
+            const [companyExists] = await Promise.all([
+                this.manager.findOne(CompanyEntity, { where: { id: employee.company_id } }),
+            ])
+
+            if(!companyExists) {
+                throw new BadRequestException('Empresa não encontrada');
+            }
+
+            return this.manager.save(EmployeeEntity, {
+                full_name: employee.full_name,
+                cpf: employee.cpf,
+                admission_date: employee.admission_date,
+                salary: +employee.salary,
+                company_id: employee.company_id
             });
         } catch (error) {
             console.error(error);

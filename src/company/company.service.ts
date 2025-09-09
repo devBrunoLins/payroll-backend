@@ -4,6 +4,7 @@ import { EntityManager } from 'typeorm';
 import { CompanyEntity } from './company.entity';
 import { CreateCompanyDto } from './dto/create.dto';
 import { EditCompanyDto } from './dto/edit.dto';
+import { EmployeeEntity } from '@/employee/employee.entity';
 
 @Injectable()
 export class CompanyService {
@@ -86,6 +87,21 @@ export class CompanyService {
         
             await this.manager.softDelete(CompanyEntity, id);
             return id;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
+    async getEmployeesByCompany(company_id: string): Promise<EmployeeEntity[]> {
+        try {
+            const companyExists = await this.exists(company_id);
+            if(!companyExists) {
+                throw new BadRequestException('Empresa não encontrada');
+            }
+        
+            const employees = await this.manager.find(EmployeeEntity, { where: { company_id } });
+            return employees;
         } catch (error) {
             console.error(error);
             throw error;
