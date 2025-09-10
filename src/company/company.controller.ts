@@ -6,6 +6,8 @@ import { CompanyEntity } from './company.entity';
 import { CreateCompanyDto } from './dto/create.dto';
 import { EditCompanyDto } from './dto/edit.dto';
 import { EmployeeEntity } from '@/employee/employee.entity';
+import { LoggedUser } from '@/common/decorators/logged-user.decorator';
+import { ITokenPayload } from '@/user/interfaces/token-payload.interface';
 
 
 @ApiTags('Empresas')
@@ -34,8 +36,8 @@ export class CompanyController {
     status: 500, 
     description: 'Erro interno do servidor' 
   })
-  async findAll(): Promise<CompanyEntity[]> {
-    return await this.companyService.findAll();
+  async findAll(@LoggedUser() user: ITokenPayload): Promise<CompanyEntity[]> {
+    return await this.companyService.findAll(user.company_id);
   }
 
   @Get(':id')

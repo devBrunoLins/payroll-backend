@@ -33,6 +33,29 @@ export class AuthController {
     return await this.signInService.signIn(body);
   }
 
+  @Post('sign-in-adm')
+  @HttpCode(200)
+  @ApiOperation({ 
+    summary: 'Login do ADMIN',
+    description: 'Realiza o login do ADMIN no sistema' 
+  })
+  @ApiBody({ 
+    type: SigninDto,
+    description: 'Dados do ADMIN a serem utilizados para login'
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Login do ADMIN realizado com sucesso',
+    example: { access_token: 'token' }
+  })
+  @ApiResponse({ 
+    status: 500, 
+    description: 'Erro interno do servidor',
+  })
+  async signInADM(@Body() body: SigninDto): Promise<{ access_token: string }> {
+    return await this.signInService.signInADM(body);
+  }
+
   @Post('recovery-password')
   @HttpCode(200)
   @ApiOperation({ 

@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
-import { EntityManager } from 'typeorm';
+import { EntityManager, Not } from 'typeorm';
 import { CompanyEntity } from './company.entity';
 import { CreateCompanyDto } from './dto/create.dto';
 import { EditCompanyDto } from './dto/edit.dto';
@@ -20,9 +20,9 @@ export class CompanyService {
         }
     }
 
-    async findAll(): Promise<CompanyEntity[]> {
+    async findAll(company_id: string): Promise<CompanyEntity[]> {
         try {
-            return this.manager.find(CompanyEntity);
+            return this.manager.find(CompanyEntity, { where: { id: Not(company_id) } });
         }
         catch(error){
             console.error(error);

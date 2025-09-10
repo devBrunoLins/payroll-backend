@@ -4,7 +4,6 @@ import { EntityManager } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { CreateUserDto } from './dto/create.dto';
 import { EditUserDto } from './dto/edit.dto';
-import { JwtService } from '@nestjs/jwt';
 import { hash } from 'bcrypt';
 
 
@@ -43,8 +42,12 @@ export class UserService {
         }
     }
 
-    async findByEmail(email: string): Promise<UserEntity> {
+    async findByEmail(email: string, role?: string): Promise<UserEntity> {
         try {
+            if(role) {
+                return this.manager.findOne(UserEntity, { where: { email, role } }) as Promise<UserEntity>;
+            }
+
             return this.manager.findOne(UserEntity, { where: { email } }) as Promise<UserEntity>;
         } catch (error) {
             console.error(error);
