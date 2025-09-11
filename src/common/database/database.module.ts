@@ -45,7 +45,7 @@ import { databaseProviders } from '../database/database.provider';
             url: process.env.DATABASE_URL, // ex.: ...neon.tech/... ?sslmode=require
             ssl,
             entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
-            synchronize: false,
+            synchronize: true,
             // logging: true,
           }
         }

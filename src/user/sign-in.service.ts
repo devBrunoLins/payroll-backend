@@ -33,6 +33,7 @@ export class SignInService {
                 name: user.name,
                 company_id: user.company_id,
                 id: user.id,
+                need_reset_password: user.need_reset_password,
             };
         
             const access_token = this.jwtService.sign(payload, {

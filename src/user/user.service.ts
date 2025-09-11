@@ -26,7 +26,17 @@ export class UserService {
 
     async findAll(): Promise<UserEntity[]> {
         try {
-            return this.manager.find(UserEntity);
+            return await this.manager.find(UserEntity, { select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                is_active: true,
+                need_reset_password: true,
+                password_hash: false,
+                company_id: true,
+                company: false
+            }});
         }
         catch(error){
             console.error(error);
@@ -97,6 +107,7 @@ export class UserService {
 
             await this.manager.update(UserEntity, id, {
                 password_hash: hashedPassword,
+                need_reset_password: true,
             });
 
             return true;

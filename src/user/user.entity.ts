@@ -72,6 +72,14 @@ export class UserEntity {
   is_active: boolean
 
   @ApiProperty({
+    description: 'Necessidade de resetar a senha',
+    example: false,
+    default: false
+  })
+  @Column({ default: false })
+  need_reset_password?: boolean
+
+  @ApiProperty({
     description: 'Token de recuperação de senha',
     example: '1234567890',
     default: null
