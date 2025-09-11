@@ -37,6 +37,38 @@ export class UserController {
     return await this.userService.findAll();
   }
 
+  @Get('for-company/:company_id')
+  @HttpCode(200)
+  @ApiOperation({ 
+    summary: 'Listar todos os usuários da empresa',
+    description: 'Retorna uma lista com todos os usuários cadastrados na empresa' 
+  })
+  @ApiParam({ 
+    name: 'company_id', 
+    description: 'ID único da empresa (UUID)',
+    example: '550e8400-e29b-41d4-a716-446655440000'
+  })
+  @ApiResponse({ 
+    status: 404, 
+    description: 'Empresa não encontrada' 
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Lista de usuários da empresa retornada com sucesso',
+    type: [UserEntity]
+  })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'Token de acesso inválido ou não fornecido' 
+  })
+  @ApiResponse({ 
+    status: 500, 
+    description: 'Erro interno do servidor' 
+  })
+  async findAllByCompanyId(@Param('company_id') company_id: string): Promise<UserEntity[]> {
+    return await this.userService.findAllByCompanyId(company_id);
+  }
+
   @Get(':id')
   @ApiOperation({ 
     summary: 'Buscar usuário por ID',
@@ -147,6 +179,42 @@ export class UserController {
   async edit(@Body() body: EditUserDto, @Param('id') id: string): Promise<UserEntity> {
     body.id = id;
     return await this.userService.edit(body);
+  }
+
+  @Put('reset-password/:id')
+  @HttpCode(200)
+  @ApiOperation({ 
+    summary: 'Redefinir senha do usuário',
+    description: 'Redefine a senha de um usuário existente' 
+  })
+  @ApiParam({ 
+    name: 'id', 
+    description: 'ID único do usuário (UUID)',
+    example: '550e8400-e29b-41d4-a716-446655440000'
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Usuário redefinido com sucesso',
+    type: UserEntity
+  })
+  @ApiResponse({ 
+    status: 400, 
+    description: 'Dados inválidos fornecidos ou senha não fornecida' 
+  })
+  @ApiResponse({ 
+    status: 404, 
+    description: 'Usuário não encontrado' 
+  })
+  @ApiResponse({ 
+    status: 409, 
+    description: 'Email já existe para outro usuário da empresa' 
+  })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'Token de acesso inválido ou não fornecido' 
+  })
+  async resetPassword(@Param('id') id: string): Promise<boolean> {
+    return await this.userService.resetPassword(id);
   }
 
   @Delete(':id')

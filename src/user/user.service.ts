@@ -5,6 +5,7 @@ import { UserEntity } from './user.entity';
 import { CreateUserDto } from './dto/create.dto';
 import { EditUserDto } from './dto/edit.dto';
 import { hash } from 'bcrypt';
+import { CompanyEntity } from '@/company/company.entity';
 
 
 @Injectable()
@@ -84,6 +85,28 @@ export class UserService {
 
     }
 
+    async resetPassword(id: string): Promise<boolean> {
+        try {
+            const userExists = await this.exists(id);
+
+            if(!userExists) {
+                throw new BadRequestException('Usuário não encontrado');
+            }
+
+            const hashedPassword = await hash(process.env.DEFAULT_PASSWORD, 10);
+
+            await this.manager.update(UserEntity, id, {
+                password_hash: hashedPassword,
+            });
+
+            return true;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+
+    }
+
     async delete(user: EditUserDto): Promise<string> {
         try {
             const userExists = await this.exists(user.id);
@@ -95,6 +118,16 @@ export class UserService {
 
         return user.id;
         } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
+    async findAllByCompanyId(company_id: string): Promise<UserEntity[]> {
+        try {
+            return this.manager.find(UserEntity, { where: { company_id } });
+        }
+        catch(error){
             console.error(error);
             throw error;
         }
