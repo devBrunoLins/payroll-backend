@@ -44,6 +44,11 @@ export class NotificationService {
             html,
         });
 
+        if(error) {
+            console.error('Error sending email:', error)
+            throw error
+        }
+
         return { data: emailResponse, error }
     }
 }
