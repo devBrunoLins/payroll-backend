@@ -114,6 +114,7 @@ export class UserService {
             const html = await this.notificationService.renderTemplate('./src/emails/password-reset-notification.html', {
                 user_name: user.name,
                 user_email: user.email,
+                system_url: 'https://folha.consultingcontabil.com.br',
                 new_password: process.env.DEFAULT_PASSWORD,
                 reset_date: new Date().toLocaleDateString()
             })
