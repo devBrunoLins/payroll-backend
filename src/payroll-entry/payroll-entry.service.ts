@@ -80,7 +80,7 @@ export class PayrollEntryService {
 
           if (error) {
               console.error('Error sending email:', error);
-              throw new Error(`Failed to send email: ${error.message}`);
+              throw new Error(`Failed to send email: ${JSON.stringify(error)}`);
           }
 
           return true
