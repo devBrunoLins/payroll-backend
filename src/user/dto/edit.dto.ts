@@ -27,4 +27,8 @@ export class EditUserDto {
   @IsOptional()
   @IsBoolean()
   is_active?: boolean
+  
+  @IsOptional()
+  @IsBoolean()
+  need_reset_password?: boolean
 }

@@ -5,13 +5,14 @@ import { UserEntity } from './user.entity';
 import { CreateUserDto } from './dto/create.dto';
 import { EditUserDto } from './dto/edit.dto';
 import { hash } from 'bcrypt';
-import { CompanyEntity } from '@/company/company.entity';
+import { NotificationService } from '@/notification/notification.service';
 
 
 @Injectable()
 export class UserService {
     constructor(
-        @InjectEntityManager() private readonly manager: EntityManager
+        @InjectEntityManager() private readonly manager: EntityManager,
+        private readonly notificationService: NotificationService
     ){}
 
     async exists(id: string): Promise<boolean> {
@@ -97,9 +98,9 @@ export class UserService {
 
     async resetPassword(id: string): Promise<boolean> {
         try {
-            const userExists = await this.exists(id);
+            const user = await this.findById(id);
 
-            if(!userExists) {
+            if(!user) {
                 throw new BadRequestException('Usuário não encontrado');
             }
 
@@ -108,6 +109,20 @@ export class UserService {
             await this.manager.update(UserEntity, id, {
                 password_hash: hashedPassword,
                 need_reset_password: true,
+            });
+
+            const html = await this.notificationService.renderTemplate('./src/emails/password-reset-notification.html', {
+                user_name: user.name,
+                user_email: user.email,
+                new_password: process.env.DEFAULT_PASSWORD,
+                reset_date: new Date().toLocaleDateString()
+            })
+
+            await this.notificationService.sendEmail({
+                from: 'Sistema de Reset de Senha <noreply@consultingcontabil.com.br>',
+                to: user.email,
+                subject: 'Senha Resetada',
+                html
             });
 
             return true;
