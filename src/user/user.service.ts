@@ -120,7 +120,8 @@ export class UserService {
             })
 
             await this.notificationService.sendEmail({
-                from: 'Sistema de Reset de Senha <noreply@consultingcontabil.com.br>',
+                from: 'Sistema de Reset de Senha',
+                // from: 'Sistema de Reset de Senha <noreply@consultingcontabil.com.br>',
                 to: user.email,
                 subject: 'Senha Resetada',
                 html

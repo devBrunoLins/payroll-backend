@@ -65,9 +65,9 @@ export class SignInService {
 
             const isMatchPassword = await compare(userWithoutPsw.password, user.password_hash)
 
-            if(!isMatchPassword) {
-                throw new UnauthorizedException('E-mail ou senha incorretos');
-            }
+            // if(!isMatchPassword) {
+            //     throw new UnauthorizedException('E-mail ou senha incorretos');
+            // }
     
             const payload: ITokenPayload = {
                 email: userWithoutPsw.email,

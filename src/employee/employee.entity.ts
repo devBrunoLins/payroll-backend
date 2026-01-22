@@ -1,7 +1,8 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, Unique, Index, DeleteDateColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, Unique, Index, DeleteDateColumn, OneToMany } from 'typeorm'
 import { ApiProperty } from '@nestjs/swagger'
 import { CompanyEntity } from '../company/company.entity'
 import { IsNotEmpty } from 'class-validator'
+import { DependentsEntity } from '@/dependents/dependents.entity'
 
 @Entity('employees')
 export class EmployeeEntity {
@@ -63,11 +64,30 @@ export class EmployeeEntity {
   admission_date?: string
 
   @ApiProperty({
+    description: 'Nome da mãe do funcionário',
+    example: 'Maria da Silva Santos',
+    nullable: false
+  })
+  @Column({ type: 'text', nullable: true })
+  mother_name?: string
+
+  @ApiProperty({
+    description: 'Nome da mãe do funcionário',
+    example: 'Maria da Silva Santos',
+    nullable: false
+  })
+  @Column({ type: 'text', nullable: true })
+  father_name?: string
+
+  @ApiProperty({
     description: 'Data e hora de criação do registro',
     example: '2024-01-15T10:30:00Z'
   })
   @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date
+
+  @OneToMany(() => DependentsEntity, (dependent) => dependent.employee)
+  dependents: DependentsEntity[]
 
   @ApiProperty({
     description: 'Data e hora da última atualização do registro',

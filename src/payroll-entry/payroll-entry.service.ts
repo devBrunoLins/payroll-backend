@@ -72,7 +72,8 @@ export class PayrollEntryService {
           const html = await this.notificationService.renderTemplate('./src/emails/payroll-notification.html', templateData);
           
           const { error } = await this.notificationService.sendEmail({
-              from: 'Sistema Folha de Pagamento <noreply@consultingcontabil.com.br>',
+              from: 'Sistema Folha de Pagamento',
+              // from: 'Sistema Folha de Pagamento <noreply@consultingcontabil.com.br>',
               to: [process.env.EMAIL_TO_REPORT],
               subject: `Folha de Pagamento ${body.month}/${body.year} - Processada`,
               html,

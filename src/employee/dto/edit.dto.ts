@@ -44,4 +44,22 @@ export class EditEmployeeDto {
   @IsNotEmpty({ message: 'Salário é obrigatório' })
   @IsNumber()
   salary: number
+
+  @ApiProperty({
+    description: 'Nome da mãe do funcionário',
+    example: 'Maria da Silva Santos',
+    nullable: false
+  })
+  @IsNotEmpty({ message: 'Nome da mãe é obrigatório' })
+  @IsString()
+  mother_name: string
+
+  @ApiProperty({
+    description: 'Nome do pai do funcionário',
+    example: 'João da Silva Santos',
+    nullable: false
+  })
+  @IsNotEmpty({ message: 'Nome do pai é obrigatório' })
+  @IsString()
+  father_name: string
 }
