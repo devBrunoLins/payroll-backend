@@ -38,29 +38,6 @@ export class DependentsController {
     return await this.dependentsService.findAll(user.company_id);
   }
 
-  @Get('pending')
-  @HttpCode(200)
-  @ApiOperation({ 
-    summary: 'Listar todos os dependentes que ainda não foram pagos',
-    description: 'Retorna uma lista com todos os dependentes cadastrados no sistema' 
-  })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Lista de dependentes que ainda não foram pagos retornada com sucesso',
-    type: [DependentsEntity]
-  })
-  @ApiResponse({ 
-    status: 401, 
-    description: 'Token de acesso inválido ou não fornecido' 
-  })
-  @ApiResponse({ 
-    status: 500, 
-    description: 'Erro interno do servidor' 
-  })
-  async listPendingForCurrentMonth(@LoggedUser() user: ITokenPayload): Promise<DependentsEntity[]> {
-    return await this.dependentsService.listPendingForCurrentMonth(user.company_id);
-  }
-
   @Get(':id')
   @HttpCode(200)
   @ApiOperation({ 
@@ -163,10 +140,9 @@ export class DependentsController {
   })
   async edit(
     @Body() body: EditDependentsDto,
-    @Param('id') id: string,
-    @LoggedUser() user: ITokenPayload
+    @Param('id') id: string
   ): Promise<string> {
-    return await this.dependentsService.edit(body, id, user.company_id);
+    return await this.dependentsService.edit(body, id);
   }
 
   @Delete(':id')

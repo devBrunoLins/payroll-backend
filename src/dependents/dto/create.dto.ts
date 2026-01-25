@@ -50,8 +50,17 @@ export class CreateDependentsDto {
       description: 'ID do funcionário dono deste dependente',
       example: '123e4567-e89b-12d3-a456-426614174000',
       format: 'uuid'
-    })
+  })	
   @IsNotEmpty({ message: 'ID do funcionário é obrigatório' })
   @IsUUID('4', { message: 'ID do funcionário deve ser um UUID válido' })
   employee_id: string
+
+  @ApiProperty({
+      description: 'Grau de parentesco do dependente',
+      example: 'd5a105cc-251d-45e9-b1a3-97322ed4fed4',
+      format: 'uuid'
+    })
+  @IsNotEmpty({ message: 'ID do grau de parentesco é obrigatório' })
+  @IsUUID('4', { message: 'ID do grau de parentesco deve ser um UUID válido' })
+  relationship: string
 }
