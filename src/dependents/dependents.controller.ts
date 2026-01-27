@@ -7,6 +7,7 @@ import { JwtAuthGuard } from '@/common/guards/jwt/jwt-auth.guard';
 import { LoggedUser } from '@/common/decorators/logged-user.decorator';
 import { ITokenPayload } from '@/user/interfaces/token-payload.interface';
 import { DependentsEntity } from './dependents.entity';
+import { DegreeKindshipEntity } from './degree-kindship.entity';
 
 @ApiTags('Dependentes')
 @ApiBearerAuth('access-token')
@@ -36,6 +37,29 @@ export class DependentsController {
   })
   async findAll(@LoggedUser() user: ITokenPayload): Promise<DependentsEntity[]> {
     return await this.dependentsService.findAll(user.company_id);
+  }
+
+  @Get('degree-kindship')
+  @HttpCode(200)
+  @ApiOperation({ 
+    summary: 'Listar todos os dependentes',
+    description: 'Retorna uma lista com todos os funcionários cadastrados no sistema' 
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Lista de dependentes retornada com sucesso',
+    type: [DependentsEntity]
+  })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'Token de acesso inválido ou não fornecido' 
+  })
+  @ApiResponse({ 
+    status: 500, 
+    description: 'Erro interno do servidor' 
+  })
+  async findAllDegreeKindship(): Promise<DegreeKindshipEntity[]> {
+    return await this.dependentsService.findAllDegreeKindship();
   }
 
   @Get(':id')

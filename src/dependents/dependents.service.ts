@@ -5,6 +5,8 @@ import { DependentsEntity } from './dependents.entity';
 import { EditDependentsDto } from './dto/edit.dto';
 import { CreateDependentsDto } from './dto/create.dto';
 import { ITokenPayload } from '@/user/interfaces/token-payload.interface';
+import { DegreeKindshipEntity } from './degree-kindship.entity';
+
 @Injectable()
 export class DependentsService {
     constructor(
@@ -24,6 +26,16 @@ export class DependentsService {
     async findAll(employee_id: string): Promise<DependentsEntity[]> {
         try {
             return this.manager.find(DependentsEntity, { where: { employee_id } });
+        }
+        catch(error){
+            console.error(error);
+            throw error;
+        }
+    }
+
+    async findAllDegreeKindship(): Promise<DegreeKindshipEntity[]> {
+        try {
+            return this.manager.find(DegreeKindshipEntity);
         }
         catch(error){
             console.error(error);

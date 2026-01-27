@@ -14,6 +14,26 @@ export class CreateEmployeeDto {
   full_name: string
 
   @ApiProperty({
+    description: 'Nome da mãe do funcionário',
+    example: 'Maria da Silva Santos',
+    minLength: 5
+  })
+  @IsNotEmpty({ message: 'Nome da mãe é obrigatório' })
+  @IsString()
+  @MinLength(5, { message: 'Nome da mãe deve ter pelo menos 5 caracteres' })
+  mother_name: string
+
+  @ApiProperty({
+    description: 'Nome do pai do funcionário',
+    example: 'João da Silva Santos',
+    minLength: 5
+  })
+  @IsNotEmpty({ message: 'Nome do pai é obrigatório' })
+  @IsString()
+  @MinLength(5, { message: 'Nome do pai deve ter pelo menos 5 caracteres' })
+  father_name: string
+
+  @ApiProperty({
     description: 'CPF do funcionário no formato brasileiro',
     example: '12345678900',
     pattern: '^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$'

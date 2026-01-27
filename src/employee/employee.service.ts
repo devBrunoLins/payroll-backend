@@ -104,7 +104,9 @@ export class EmployeeService {
                 cpf: employee.cpf,
                 admission_date: employee.admission_date,
                 salary: +employee.salary,
-                company_id: userLogged.company_id
+                company_id: userLogged.company_id,
+                mother_name: employee.mother_name,
+                father_name: employee.father_name
             });
         } catch (error) {
             console.error(error);
