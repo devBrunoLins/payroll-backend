@@ -1,11 +1,12 @@
 import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
-import { EntityManager } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 import { DependentsEntity } from './dependents.entity';
 import { EditDependentsDto } from './dto/edit.dto';
 import { CreateDependentsDto } from './dto/create.dto';
 import { ITokenPayload } from '@/user/interfaces/token-payload.interface';
 import { DegreeKindshipEntity } from './degree-kindship.entity';
+import { EmployeeEntity } from '@/employee/employee.entity';
 
 @Injectable()
 export class DependentsService {
@@ -16,6 +17,16 @@ export class DependentsService {
     async exists(id: string, employee_id: string): Promise<boolean> {
         try {
             return this.manager.exists(DependentsEntity, { where: { id, employee_id } });
+        }
+        catch(error){
+            console.error(error);
+            throw error;
+        }
+    }
+
+    async existsWithEmployee(id: string): Promise<boolean> {
+        try {
+            return this.manager.exists(DependentsEntity, { where: { id } });
         }
         catch(error){
             console.error(error);
@@ -86,9 +97,9 @@ export class DependentsService {
         }
     }
 
-    async delete(id: string, employee_id: string): Promise<string> {
+    async delete(id: string): Promise<string> {
         try {
-            const exists = await this.exists(id, employee_id);
+            const exists = await this.existsWithEmployee(id);
             if(!exists) {
                 throw new BadRequestException('Dependente não encontrado');
             }

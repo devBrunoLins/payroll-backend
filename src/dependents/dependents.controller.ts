@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { DependentsService } from './dependents.service';
 import { CreateDependentsDto } from './dto/create.dto';
@@ -11,7 +11,7 @@ import { DegreeKindshipEntity } from './degree-kindship.entity';
 
 @ApiTags('Dependentes')
 @ApiBearerAuth('access-token')
-// @UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('dependents')
 export class DependentsController {
   constructor(private readonly dependentsService: DependentsService) {}
@@ -35,8 +35,10 @@ export class DependentsController {
     status: 500, 
     description: 'Erro interno do servidor' 
   })
-  async findAll(@LoggedUser() user: ITokenPayload): Promise<DependentsEntity[]> {
-    return await this.dependentsService.findAll(user.company_id);
+  async findAll(
+    @Query('employeeId') employee_id: string
+  ): Promise<DependentsEntity[]> {
+    return await this.dependentsService.findAll(employee_id);
   }
 
   @Get('degree-kindship')
@@ -196,9 +198,8 @@ export class DependentsController {
     description: 'Token de acesso inválido ou não fornecido' 
   })
   async delete(
-    @Param('id') id: string,
-    @LoggedUser() user: ITokenPayload
+    @Param('id') id: string
   ): Promise<string> {
-    return await this.dependentsService.delete(id, user.company_id);
+    return await this.dependentsService.delete(id);
   }
 }
